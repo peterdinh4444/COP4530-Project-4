@@ -1,0 +1,7 @@
+USF	Starbucks	Publix	Stadium	BusStop
+USF	Starbucks	0.27
+USF	Publix	2.11
+USF	Stadium	1.8
+Starbucks	Stadium	0.32
+Starbucks	BusStop	8.4
+Stadium	BusStop	4.72
