@@ -12,11 +12,11 @@ class Edge{
 private:
     Vertex* v1; //pointers for different vertexes
     Vertex* v2;
-    string label;   //the weight for the edge
+    float label;   //the weight for the edge
 
 public:
     //Constructor to initialize an edge with two vertices and a label
-    Edge(Vertex* u, Vertex* v, const string& x) : v1(u), v2(v), label(x){}
+    Edge(Vertex* u, Vertex* v, const float& x) : v1(u), v2(v), label(x){}
 
     //function to get data stored in edge
     string operator*();

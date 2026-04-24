@@ -31,6 +31,7 @@ class Vertex{
 
     //function for erasing an edge from vertex list
     void removeEdge(Edge* e);
+
 };
 
 #endif
