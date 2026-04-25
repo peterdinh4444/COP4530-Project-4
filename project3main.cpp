@@ -1,4 +1,3 @@
-// Imports
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -7,40 +6,38 @@
 #include <cmath>
 using namespace std;
 
-// Create Node Class
-class Node
-{
+// Tree node structure
+class Node {
 public:
-    string value; // What is in the node
-    string label; // (Yes/No/NULL)
+    string value;
+    string label;
     int level;
     int position;
     Node *parent;
-    vector<Node *> children; // Vector of the node's children
+    vector<Node *> children;
 
-    Node(string v, string lab = "", int lev = 0, int p = 1) : value(v), label(lab), level(lev), position(p), parent(nullptr) {}
+    Node(string v, string lab = "", int lev = 0, int p = 1)
+        : value(v), label(lab), level(lev), position(p), parent(nullptr) {}
 };
 
-// Create binary tree from txt file
+// Build tree from file (assumes preorder-style structured input)
 pair<Node *, vector<Node *>> tree(string filename)
 {
     ifstream file(filename);
     string line;
 
     if (!file.is_open())
-        return {nullptr, {}}; // Return if file didn't open
+        return {nullptr, {}}; // file error
 
     Node *root = nullptr;
     vector<Node *> allNodes;
 
-    // Handles rest of text
     while (getline(file, line))
     {
         stringstream stream(line);
         string value, label;
         int level, position;
 
-        // Assigns parts of the text to variables
         if (!(stream >> level >> position >> label))
             continue;
 
@@ -48,62 +45,54 @@ pair<Node *, vector<Node *>> tree(string filename)
 
         Node *tempNode = new Node(value, label, level, position);
 
-        // Root case
+        // First node at level 0 becomes root
         if (level == 0)
-        {
             root = tempNode;
-        }
 
-        // Traverse allNodes to connect newNode with its parent
+        // Find parent based on level (previous node with level-1)
         for (int i = allNodes.size() - 1; i >= 0; --i)
         {
             if (allNodes[i]->level == tempNode->level - 1)
-            { // Preorder forces parent's level to be 1 less
+            {
                 tempNode->parent = allNodes[i];
                 allNodes[i]->children.push_back(tempNode);
                 break;
             }
         }
+
         allNodes.push_back(tempNode);
     }
-    return {root, allNodes};
-};
 
-// Displays content, and one (ancestor, descendant, and sibling)
+    return {root, allNodes};
+}
+
+// Display node relationships (ancestor, descendant, sibling)
 void display(int pos, const vector<Node *> &allNodes)
 {
     Node *target = nullptr;
 
     for (auto node : allNodes)
-    {
         if (node->position == pos)
-        {
             target = node;
-            break;
-        }
-    }
 
     if (!target)
     {
         cout << "Invalid input. Please try again." << endl;
         return;
     }
+
     cout << "\tDisplay" << endl;
     cout << "Content: " << target->value << endl;
 
-    // Ancestor
-    if (target->parent)
-        cout << "Ancestor: " << target->parent->value << endl;
-    else
-        cout << "Ancestor: None" << endl;
+    // Parent
+    cout << "Ancestor: "
+         << (target->parent ? target->parent->value : "None") << endl;
 
-    // Descendant
-    if (!target->children.empty())
-        cout << "Descendant: " << target->children[0]->value << endl;
-    else
-        cout << "Descendant: None" << endl;
+    // First child only (if exists)
+    cout << "Descendant: "
+         << (!target->children.empty() ? target->children[0]->value : "None") << endl;
 
-    // Sibling
+    // Sibling search
     if (target->parent && target->parent->children.size() > 1)
     {
         for (auto sibling : target->parent->children)
@@ -121,33 +110,36 @@ void display(int pos, const vector<Node *> &allNodes)
     }
 }
 
+// Preorder visualization
 void visualization(Node *n)
 {
     for (int i = 0; i < 2 * (n->level); i++)
         cout << "-";
+
     if (n->level > 0)
         cout << "[" << n->label << "]";
-    cout << " " << n->value << endl;
-    for (auto child : n->children)
-    {
-        visualization(child);
-    }
-};
 
+    cout << " " << n->value << endl;
+
+    for (auto child : n->children)
+        visualization(child);
+}
+
+// Height of tree (recursive)
 int tree_height(Node *root)
 {
-    int max_tree_height = -1;
-
     if (!root)
         return -1;
-    for (auto node : root->children)
-    {
-        max_tree_height = max(max_tree_height, tree_height(node));
-    }
-    return max_tree_height + 1;
-};
 
-// Finds internal nodes
+    int max_h = -1;
+
+    for (auto node : root->children)
+        max_h = max(max_h, tree_height(node));
+
+    return max_h + 1;
+}
+
+// Collect internal nodes (preorder)
 void preorder_internal(Node *root, ofstream &out)
 {
     if (!root)
@@ -160,7 +152,7 @@ void preorder_internal(Node *root, ofstream &out)
         preorder_internal(node, out);
 }
 
-// Finds external nodes
+// Collect external (leaf) nodes
 void preorder_external(Node *root, ofstream &out)
 {
     if (!root)
@@ -173,32 +165,32 @@ void preorder_external(Node *root, ofstream &out)
         preorder_external(node, out);
 }
 
+// Compute tree statistics
 void tree_properties(vector<Node *> allNodes, Node *root, ofstream &out)
 {
-    int internal_counter = 0;
-    int external_counter = 0;
-    for (auto internal_nodes : allNodes)
-    {
-        if (internal_nodes->children.empty())
-            external_counter++;
-        else
-            internal_counter++;
-    }
     if (allNodes.empty())
         return;
 
+    int internal = 0, external = 0;
+
+    for (auto node : allNodes)
+        (node->children.empty() ? external : internal)++;
+
     out << "1. Root node: " << root->value << endl;
-    out << "2. Number of internal nodes: " << internal_counter << endl;
-    out << "3. Number of external (leaf) nodes: " << external_counter << endl;
+    out << "2. Internal nodes: " << internal << endl;
+    out << "3. Leaf nodes: " << external << endl;
     out << "4. Tree height: " << tree_height(root) << endl;
-    out << "5. Internal nodes(preorder): ";
+
+    out << "5. Internal (preorder): ";
     preorder_internal(root, out);
     out << endl;
-    out << "6. External nodes(preorder): ";
+
+    out << "6. External (preorder): ";
     preorder_external(root, out);
     out << endl;
-};
+}
 
+// Binary tree check
 bool isBinary(Node *root)
 {
     if (!root)
@@ -214,6 +206,7 @@ bool isBinary(Node *root)
     return true;
 }
 
+// Proper binary tree check (0 or 2 children)
 bool isProper(Node *root)
 {
     if (!root)
@@ -229,18 +222,21 @@ bool isProper(Node *root)
     return true;
 }
 
+// Count total nodes
 int countNodes(Node *root)
 {
     if (!root)
         return 0;
 
     int count = 1;
+
     for (auto child : root->children)
         count += countNodes(child);
 
     return count;
 }
 
+// Perfect tree check
 bool isPerfect(Node *root)
 {
     int h = tree_height(root);
@@ -249,6 +245,7 @@ bool isPerfect(Node *root)
     return total == (pow(2, h + 1) - 1);
 }
 
+// Balanced tree check
 bool isBalanced(Node *root)
 {
     if (!root)
@@ -270,6 +267,8 @@ bool isBalanced(Node *root)
 
     return true;
 }
+
+// Write tree to file
 void write_out(Node *n, ofstream &out)
 {
     for (int i = 0; i < 2 * n->level; i++)
@@ -284,9 +283,9 @@ void write_out(Node *n, ofstream &out)
         write_out(child, out);
 }
 
+// Main driver
 int main()
 {
-    // Creates tree from text file
     auto result = tree("tree-investment-1.txt");
     Node *root = result.first;
     vector<Node *> allNodes = result.second;
@@ -294,32 +293,25 @@ int main()
     bool running = true;
     string input;
 
-    // Allows program to run until stated otherwise
     while (running)
     {
-        cout << "Which node would you like to explore (enter position or \"exit\"): " << endl;
+        cout << "Enter node position (or 'exit'): ";
         cin >> input;
 
-        // Exit check
         if (input == "exit")
         {
             cout << "Goodbye!" << endl;
-            running = false;
             break;
         }
-        else
+
+        try
         {
-            // Displays position information
-            try
-            {
-                int position = stoi(input);
-                display(position + 1, allNodes);
-            }
-            catch (invalid_argument &e)
-            {
-                cout << "Invalid input. Please try again." << endl;
-                continue;
-            }
+            int pos = stoi(input);
+            display(pos + 1, allNodes);
+        }
+        catch (...)
+        {
+            cout << "Invalid input." << endl;
         }
     }
 
@@ -327,22 +319,22 @@ int main()
 
     out << "Tree Visualization\n";
     write_out(root, out);
-    out << "\n";
+
+    out << "\nTree Properties\n";
     tree_properties(allNodes, root, out);
 
     out << "\nBinary Tree Analysis\n";
-
     bool binary = isBinary(root);
-    out << "Is Binary Tree? " << (binary ? "Yes" : "No") << "\n";
+
+    out << "Binary? " << (binary ? "Yes" : "No") << "\n";
 
     if (binary)
     {
-        out << "Proper Tree? " << (isProper(root) ? "Yes" : "No") << "\n";
-        out << "Perfect Tree? " << (isPerfect(root) ? "Yes" : "No") << "\n";
-        out << "Balanced Tree? " << (isBalanced(root) ? "Yes" : "No") << "\n";
+        out << "Proper? " << (isProper(root) ? "Yes" : "No") << "\n";
+        out << "Perfect? " << (isPerfect(root) ? "Yes" : "No") << "\n";
+        out << "Balanced? " << (isBalanced(root) ? "Yes" : "No") << "\n";
     }
 
     out.close();
-
     return 0;
 }
