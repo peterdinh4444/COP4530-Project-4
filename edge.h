@@ -6,31 +6,32 @@
 
 using namespace std;
 
+// Forward declaration to resolve circular dependency
 class Vertex;
 
-class Edge{
+class Edge {
 private:
-    Vertex* v1; //pointers for different vertexes
-    Vertex* v2;
-    float label;   //the weight for the edge
+    Vertex* v1;    // First endpoint of the edge
+    Vertex* v2;    // Second endpoint of the edge
+    float label;   // Distance or weight value for this edge
 
 public:
-    //Constructor to initialize an edge with two vertices and a label
-    Edge(Vertex* u, Vertex* v, const float& x) : v1(u), v2(v), label(x){}
+    // Constructor: links two vertices with a numeric weight
+    Edge(Vertex* u, Vertex* v, const float& x) : v1(u), v2(v), label(x) {}
 
-    //function to get data stored in edge
+    // Operator overload to return the weight (label) value
     float operator*();
 
-    //returns the two vertex objects the edge connects
+    // Returns a list containing the two endpoints
     vector<Vertex*> endVertices();
 
-    //function to return the vertex on the other end given a vertex
+    // Given one endpoint, returns the vertex at the other side
     Vertex* opposite(Vertex* v);
 
-    //check if edge shares a vertex with edge e
+    // Determines if this edge shares a vertex with another edge
     bool isAdjacentTo(Edge* e);
 
-    //check if edge is connected to vertex v
+    // Determines if a specific vertex is one of the endpoints
     bool isIncidentOn(Vertex* v);
 };
 

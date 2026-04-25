@@ -5,35 +5,41 @@
 #include <string>
 #include "vertex.h"
 #include "edge.h"
+
 using namespace std;
 
-
-// Graph Class definition
-class Graph{
+class Graph {
 private:
-vector<Vertex*> allVertices;
-vector<Edge*> allEdges;
+    vector<Vertex*> allVertices; // Internal storage for all nodes
+    vector<Edge*> allEdges;      // Internal storage for all connections
 
-Vertex* findVertex(const string& name);
-Edge* findEdge(Vertex* v, Vertex* w);
+    // Helper functions for internal lookups
+    Vertex* findVertex(const string& name);
+    Edge* findEdge(Vertex* v, Vertex* w);
 
 public:
-Graph(const string& filename);
-~Graph();
+    // Lifecycle management
+    Graph(const string& filename); // Load graph from a formatted text file
+    ~Graph();                      // Clean up all dynamically allocated memory
 
-vector<Vertex*> vertices();
-vector<Edge*> edges();
+    // Accessors for graph components
+    vector<Vertex*> vertices();
+    vector<Edge*> edges();
 
-Vertex* insertVertex(const string& x);
-Edge* insertEdge(Vertex* v, Vertex* w, float x);
+    // Modification methods
+    Vertex* insertVertex(const string& x);
+    Edge* insertEdge(Vertex* v, Vertex* w, float x);
 
-bool eraseVertex(Vertex* v);
-bool eraseEdge(Edge* e);
+    // Deletion methods
+    bool eraseVertex(Vertex* v); // Removes vertex and all its incident edges
+    bool eraseEdge(Edge* e);   // Removes specific edge from graph and vertices
 
-Vertex* getVertex(const string& name);
+    // Public utilities
+    Vertex* getVertex(const string& name); // Interface for main.cpp access
 
-void printIncidentEdges(const string& name);
-void findPath(const string& startName, const string& endName);
+    // Graph algorithms and reporting
+    void printIncidentEdges(const string& name);                  // List edges of a specific node
+    void findPath(const string& startName, const string& endName); // BFS-based pathfinding
 };
 
 #endif

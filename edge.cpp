@@ -5,34 +5,31 @@
 
 using namespace std;
 
-//function to return label of current node
+// Returns the weight/label value of the edge
 float Edge::operator*(){
     return label;
 }
 
-//function to return the two vertices the edge connects
+// Returns the two vertices that this edge connects
 vector<Vertex*> Edge::endVertices(){
     return {v1, v2};
 }
 
-//function for returning opposite vertex
+// Given one endpoint, returns the vertex at the other end
 Vertex* Edge::opposite(Vertex* v){
-if(v == v1)
-return v2;  //return opposite
-if(v == v2)
-return v1;  //return opposite
-return nullptr; //if V is not part of edge return null
+    if(v == v1) return v2;
+    if(v == v2) return v1;
+    return nullptr; // Returns null if v is not an endpoint of this edge
 }
 
-//function to check if edge shares a vertex with another edge
+// Checks if this edge and edge 'e' share at least one common vertex
 bool Edge::isAdjacentTo(Edge* e){
-    vector<Vertex*> otherVertices = e->endVertices();   //get the vertexes e connects to
-
-    //check if any of the vertexes are the same if they are they have an edge connecting them
-    return (v1 == otherVertices[0] || v1 == otherVertices[1] || v2 == otherVertices[0] || v2 == otherVertices[1]);
+    vector<Vertex*> otherVertices = e->endVertices();
+    return (v1 == otherVertices[0] || v1 == otherVertices[1] || 
+            v2 == otherVertices[0] || v2 == otherVertices[1]);
 }
 
-//check if edge is connected to a vertex v
+// Checks if vertex 'v' is one of the two endpoints of this edge
 bool Edge::isIncidentOn(Vertex* v){
-    return(v1 == v || v2 == v); //return true if edges vertices are the vertex
+    return (v1 == v || v2 == v);
 }

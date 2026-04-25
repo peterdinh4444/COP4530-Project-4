@@ -6,32 +6,32 @@
 
 using namespace std;
 
+// Forward declaration to resolve circular dependency with Edge class
 class Edge;
 
-class Vertex{
-    private:
-    string element; //the data stored in the vertex
-    vector <Edge*> adjEdges; //vector of edges connected to the vertex
+class Vertex {
+private:
+    string element;           // The name or data stored in the vertex (e.g., "USF")
+    vector<Edge*> adjEdges;   // List of all edges connected to this vertex
 
-    public:
-    //constructor for vertex
-    Vertex(string x) : element(x){}
+public:
+    // Constructor: initializes vertex with a string identifier
+    Vertex(string x) : element(x) {}
 
-    //function to get data stored in vertex
+    // Operator overload to return the vertex name
     string operator*();
 
-    //function to get edges incident on vertex
+    // Returns a vector of all edges incident on this vertex
     vector<Edge*> incidentEdges();
 
-    //function to check if the vertex is adjacent to vertex 
+    // Checks if this vertex shares an edge with vertex 'v'
     bool isAdjacentTo(Vertex* v);
 
-    //function for graph class and adding edges
+    // Adds a pointer to an edge into the adjacency list
     void addEdge(Edge* e);
 
-    //function for erasing an edge from vertex list
+    // Removes a specific edge pointer from the adjacency list
     void removeEdge(Edge* e);
-
 };
 
 #endif

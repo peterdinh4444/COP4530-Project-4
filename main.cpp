@@ -15,8 +15,8 @@ int main() {
     cout << "Hello!" << endl;
     cout << "Enter the file name: " << endl;
 
-    filename = "inputfile-1.txt"; // for testing
-    Graph graph(filename);
+    filename = "inputfile-1.txt"; 
+    Graph graph(filename); // Initialize graph from file
 
     cout << "\nThank you. Your graph is ready." << endl;
 
@@ -32,6 +32,7 @@ int main() {
 
         cin >> input;
 
+        // Validate menu selection is an integer
         try {
             convertedInput = stoi(input);
         } catch (exception& e) {
@@ -44,21 +45,20 @@ int main() {
         case 1: {
             cout << "Enter vertex: ";
             cin >> vertex1;
-
-            graph.printIncidentEdges(vertex1);
+            graph.printIncidentEdges(vertex1); // Show all edges connected to vertex
             break;
         }
 
         case 2: {
             cout << "Enter start and end vertex: ";
             cin >> vertex1 >> vertex2;
-
-            graph.findPath(vertex1, vertex2);
+            graph.findPath(vertex1, vertex2); // BFS search for path between two nodes
             break;
         }
 
         case 3: {
             cout << "Enter vertex1 vertex2 and edge value: ";
+            // Ensure float input is valid to prevent cin stream errors
             if (!(cin >> vertex1 >> vertex2 >> edgeValue)) {
                 cout << "Invalid input format. Please enter: string string float" << endl;
                 cin.clear(); 
@@ -70,18 +70,17 @@ int main() {
             Vertex* w = graph.getVertex(vertex2);
 
             if (v == nullptr || w == nullptr) {
-                cout << "Error: One or both vertices (" << vertex1 << ", " << vertex2 << ") not found." << endl;
+                cout << "Error: One or both vertices not found." << endl;
                 break;
             }
 
-            // Capture the return pointer to verify success
+            // Verify if edge was successfully created or already existed
             Edge* newEdge = graph.insertEdge(v, w, edgeValue);
 
             if (newEdge != nullptr) {
-                cout << "Edge inserted successfully between " << vertex1 << " and " << vertex2 << "." << endl;
+                cout << "Edge inserted successfully." << endl;
             } else {
-                // This handles the logic in Graph::insertEdge where it returns nullptr for duplicates
-                cout << "Edge insertion failed: A connection already exists between these vertices." << endl;
+                cout << "Edge insertion failed: Connection already exists." << endl;
             }
             break;
         }
@@ -97,8 +96,7 @@ int main() {
                 break;
             }
 
-            graph.eraseVertex(v);
-
+            graph.eraseVertex(v); // Deletes vertex and all associated incident edges
             cout << "Vertex removed." << endl;
             break;
         }
