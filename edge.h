@@ -19,7 +19,7 @@ public:
     Edge(Vertex* u, Vertex* v, const float& x) : v1(u), v2(v), label(x){}
 
     //function to get data stored in edge
-    string operator*();
+    float operator*();
 
     //returns the two vertex objects the edge connects
     vector<Vertex*> endVertices();

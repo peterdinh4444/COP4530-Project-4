@@ -6,7 +6,7 @@
 using namespace std;
 
 //function to return label of current node
-string Edge::operator*(){
+float Edge::operator*(){
     return label;
 }
 
