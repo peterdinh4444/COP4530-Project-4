@@ -24,7 +24,7 @@ Graph::Graph(const string& filename) {
         string vertexName;
 
         //read each vertex name from first line and add it to graph
-        while (getline(ss, vertexName, '\t')) {
+        while (ss >> vertexName) {
             insertVertex(vertexName);
         }
     }

@@ -58,15 +58,31 @@ int main() {
         }
 
         case 3: {
-            cout << "Enter vertex1 vertex2 edgeValue: ";
-            cin >> vertex1 >> vertex2 >> edgeValue;
+            cout << "Enter vertex1 vertex2 and edge value: ";
+            if (!(cin >> vertex1 >> vertex2 >> edgeValue)) {
+                cout << "Invalid input format. Please enter: string string float" << endl;
+                cin.clear(); 
+                cin.ignore(1000, '\n');
+                break;
+            }
 
             Vertex* v = graph.getVertex(vertex1);
             Vertex* w = graph.getVertex(vertex2);
 
-            graph.insertEdge(v, w, edgeValue);
+            if (v == nullptr || w == nullptr) {
+                cout << "Error: One or both vertices (" << vertex1 << ", " << vertex2 << ") not found." << endl;
+                break;
+            }
 
-            cout << "Edge inserted." << endl;
+            // Capture the return pointer to verify success
+            Edge* newEdge = graph.insertEdge(v, w, edgeValue);
+
+            if (newEdge != nullptr) {
+                cout << "Edge inserted successfully between " << vertex1 << " and " << vertex2 << "." << endl;
+            } else {
+                // This handles the logic in Graph::insertEdge where it returns nullptr for duplicates
+                cout << "Edge insertion failed: A connection already exists between these vertices." << endl;
+            }
             break;
         }
 
@@ -75,6 +91,11 @@ int main() {
             cin >> vertex1;
 
             Vertex* v = graph.getVertex(vertex1);
+
+            if (v == nullptr) {
+                cout << "Vertex not found." << endl;
+                break;
+            }
 
             graph.eraseVertex(v);
 

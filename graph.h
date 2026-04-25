@@ -8,17 +8,6 @@
 using namespace std;
 
 
-// Helper function for Vertex Vector
-Vertex* findVertex(string name, const vector<Vertex*>& allVertices){
-    for (auto vertex : allVertices){
-        if (vertex->operator*() == name){
-            return vertex;
-        }
-    }
-    return nullptr;
-};
-
-
 // Graph Class definition
 class Graph{
 private:
